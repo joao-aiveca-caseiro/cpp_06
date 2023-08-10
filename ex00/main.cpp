@@ -6,7 +6,7 @@
 /*   By: jaiveca- <jaiveca-@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/29 23:17:01 by jaiveca-          #+#    #+#             */
-/*   Updated: 2023/08/10 02:34:18 by jaiveca-         ###   ########.fr       */
+/*   Updated: 2023/08/10 18:22:46 by jaiveca-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,6 @@
 
 int	main(void)
 {
-	std::cout << static_cast<double> (24435.) << std::endl;
-	ScalarConverter::convert(".");
+	std::cout << static_cast<char> (42) << std::endl;
+	ScalarConverter::convert("-42.2");
 }

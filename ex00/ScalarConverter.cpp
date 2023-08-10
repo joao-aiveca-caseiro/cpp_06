@@ -6,7 +6,7 @@
 /*   By: jaiveca- <jaiveca-@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/29 21:23:34 by jaiveca-          #+#    #+#             */
-/*   Updated: 2023/08/10 02:32:39 by jaiveca-         ###   ########.fr       */
+/*   Updated: 2023/08/10 16:41:00 by jaiveca-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,34 +32,102 @@ void ScalarConverter::convert(std::string literal)
 	std::string original_type;
 	
 	if (literal == "-inff" || literal == "+inff" || literal == "nanf")
-		original_type = "float";
+		original_type = "float_extra";
 	else if (literal == "-inf" || literal == "+inf" || literal == "nan")
-		original_type = "double";
+		original_type = "double_extra";
 	else if (literal.length() == 1 && literal.find_first_not_of("0123456789") != std::string::npos)
 		original_type = "char";
 	else if (literal.find_first_not_of("-+0123456789") == std::string::npos 
-	&& literal.find_first_of("+-") == literal.find_last_of("+-") 
-	&& (literal.find_first_of("+-") == 0 || literal.find_first_of("+-") == std::string::npos))
+	&& check_plus_minus(literal))
 		original_type = "int";
-	else if (literal.find_first_not_of("-+0123456789.") == std::string::npos
-	&& literal.find_first_of("+-") == literal.find_last_of("+-") 
-	&& (literal.find_first_of("+-") == 0 || literal.find_first_of("+-") == std::string::npos)
-	&& literal.find_first_of(".") != std::string::npos)
+	else if (literal.find_first_not_of("-+0123456789e.") == std::string::npos
+	&& check_plus_minus(literal) && check_e(literal)
+	&& check_decimal(literal))
 		original_type = "double";
-	else if (literal.find_first_not_of("-+0123456789f.") == std::string::npos
-	&& literal.find_first_of("+-") == literal.find_last_of("+-") 
-	&& (literal.find_first_of("+-") == 0 || literal.find_first_of("+-") == std::string::npos)
-	&& literal.find_first_of("f") == literal.find_last_of("f")
-	&& literal.find_first_of("f") == literal.length() - 1
-	&& literal.find_first_of(".") != std::string::npos)
+	else if (literal.find_first_not_of("-+0123456789fe.") == std::string::npos
+	&& check_plus_minus(literal) && check_f(literal) 
+	&& check_e(literal) && check_decimal(literal))
 		original_type = "float";
+	else
+		original_type = "unsupported";
 
-	std::cout << original_type << std::endl;
-	// std::cout << "char:" << convert_to_char(literal, original_type) << std::endl;
+	//std::cout << original_type << std::endl;
+	
+	
+	std::cout << "char:" << convert_to_char(literal, original_type) << std::endl;
 	// std::cout << "int:" << convert_to_int(literal, original_type) << std::endl;
 	// std::cout << "float:" << convert_to_float(literal, original_type) << std::endl;
 	// std::cout << "double:" << convert_to_double(literal, original_type) << std::endl;
+}
 
+std::size_t	ScalarConverter::check_e(std::string literal)
+{
+	// e indicates an exponent, it cannot be the last character 
+	// and it cannot come before a decimal point, if it exists
+	
+	std::size_t e_pos = literal.find_first_of("e");
+	std::size_t	decimal_pos = literal.find_first_of(".");
 
+	if (literal.find_first_of("e") == std::string::npos)
+		return (1);	
+	if (e_pos != literal.find_last_of("e") 
+	|| e_pos == literal.length() - 1
+	|| e_pos == literal.find_first_of("f") - 1)
+		return (0);
+	if (decimal_pos != std::string::npos)
+		if (decimal_pos > literal.find_first_of("e"))
+			return (0);
 
+	return (1);
+}
+
+std::size_t	ScalarConverter::check_f(std::string literal)
+{
+	// floats always end in an f, however they must also have a decimal point before the f
+	
+	std::size_t f_pos = literal.find_first_of("f");
+	std::size_t	decimal_pos = literal.find_first_of(".");
+	
+	if (f_pos == std::string::npos 
+	|| f_pos != literal.find_last_of("f") 
+	|| f_pos != literal.length() - 1
+	|| decimal_pos == std::string::npos)
+		return (0);
+
+	return (1);
+}
+
+std::size_t	ScalarConverter::check_plus_minus(std::string literal)
+{
+	std::size_t pm_pos = literal.find_first_of("+-");
+	
+	if (pm_pos != literal.find_last_of("+-") 
+	|| (pm_pos != 0 && pm_pos != std::string::npos))
+		return (0);
+
+	return (1);
+}
+
+std::size_t	ScalarConverter::check_decimal(std::string literal)
+{
+	// a double needs to have at least an exponent or a decimal point,
+	// having both at the same time isn't mandatory
+	std::size_t decimal_pos = literal.find_first_of(".");
+	std::size_t e_pos = literal.find_first_of("e");
+	
+	if (decimal_pos != literal.find_last_of("."))
+		return (0);
+	if (decimal_pos == std::string::npos)
+		if (e_pos == std::string::npos)
+			return (0);
+
+	return (1);
+}
+
+char	ScalarConverter::convert_to_char(std::string literal, std::string original_type)
+{
+	if (original_type == "float_extra" || original_type == "double_extra")
+		return ()
+
+	return ();
 }

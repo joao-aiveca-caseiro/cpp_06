@@ -1,23 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Serializer.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaiveca- <jaiveca-@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/29 23:17:01 by jaiveca-          #+#    #+#             */
-/*   Updated: 2023/08/15 01:57:04 by jaiveca-         ###   ########.fr       */
+/*   Created: 2023/07/29 20:28:49 by jaiveca-          #+#    #+#             */
+/*   Updated: 2023/08/14 16:34:33 by jaiveca-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ScalarConverter.hpp"
+#ifndef SERIALIZER_HPP
+# define SERIALIZER_HPP
 
-int	main(int argc, char **argv)
+#include <string>
+#include <iostream>
+#include <stdint.h>
+#include "Data.hpp"
+
+class	Serializer
 {
-	if (argc != 2)
-	{
-		std::cout << "Please write a single string representing an int, float, double or char." << std::endl;
-		return (1);
-	}
-	ScalarConverter::convert(argv[1]);
-}
+	public:
+		
+		~Serializer();
+		static	uintptr_t serialize(Data* ptr);
+		static	Data* deserialize(uintptr_t raw);
+
+	private:
+		
+		Serializer();
+		Serializer(const Serializer &target);
+		Serializer	&operator=(const Serializer &target);
+};
+
+#endif

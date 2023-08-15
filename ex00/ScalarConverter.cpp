@@ -6,7 +6,7 @@
 /*   By: jaiveca- <jaiveca-@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/29 21:23:34 by jaiveca-          #+#    #+#             */
-/*   Updated: 2023/08/10 16:41:00 by jaiveca-         ###   ########.fr       */
+/*   Updated: 2023/08/15 02:51:37 by jaiveca-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,22 @@ ScalarConverter &ScalarConverter::operator=(const ScalarConverter &target)
 void ScalarConverter::convert(std::string literal)
 {
 	std::string original_type;
+	int			flag = 0;
 	
 	if (literal == "-inff" || literal == "+inff" || literal == "nanf")
-		original_type = "float_extra";
+	{
+		original_type = "float";
+		flag = 1;		
+	}
 	else if (literal == "-inf" || literal == "+inf" || literal == "nan")
-		original_type = "double_extra";
+	{
+		original_type = "double";
+		flag = 1;		
+	}
 	else if (literal.length() == 1 && literal.find_first_not_of("0123456789") != std::string::npos)
 		original_type = "char";
 	else if (literal.find_first_not_of("-+0123456789") == std::string::npos 
-	&& check_plus_minus(literal))
+	&& check_plus_minus(literal) && check_limits(literal))
 		original_type = "int";
 	else if (literal.find_first_not_of("-+0123456789e.") == std::string::npos
 	&& check_plus_minus(literal) && check_e(literal)
@@ -49,13 +56,14 @@ void ScalarConverter::convert(std::string literal)
 	&& check_e(literal) && check_decimal(literal))
 		original_type = "float";
 	else
-		original_type = "unsupported";
+	{
+		std::cout << "The introduced literal represents an unsupported type." << std::endl;
+		return ;	
+	}
 
-	//std::cout << original_type << std::endl;
-	
-	
-	std::cout << "char:" << convert_to_char(literal, original_type) << std::endl;
-	// std::cout << "int:" << convert_to_int(literal, original_type) << std::endl;
+	std::cout << "Type detected: " << original_type << std::endl;
+	convert_to_char(literal, original_type, flag);
+	convert_to_int(literal, original_type, flag);
 	// std::cout << "float:" << convert_to_float(literal, original_type) << std::endl;
 	// std::cout << "double:" << convert_to_double(literal, original_type) << std::endl;
 }
@@ -124,10 +132,48 @@ std::size_t	ScalarConverter::check_decimal(std::string literal)
 	return (1);
 }
 
-char	ScalarConverter::convert_to_char(std::string literal, std::string original_type)
+std::size_t ScalarConverter::check_limits(std::string literal)
 {
-	if (original_type == "float_extra" || original_type == "double_extra")
-		return ()
+	double to_double = atof(literal.c_str());
+	if (to_double < std::numeric_limits<int>::min() || to_double > std::numeric_limits<int>::max())
+		return (0);
+	return (1);
+}
 
-	return ();
+void	ScalarConverter::convert_to_char(std::string literal, std::string original_type, int flag)
+{
+	if (flag)
+	{
+		std::cout << "char: impossible" << std::endl;
+		return ;	
+	}
+	else if (original_type == "char")
+	{
+		if (*literal.begin() >= 32 && *literal.begin() <= 126)
+			std::cout << "char: '" << *literal.begin() << "'" << std::endl;
+		else
+			std::cout << "char: Non displayable" << std::endl;
+		return ;
+	}
+		
+	double	to_double = atof(literal.c_str());
+	char	output	= static_cast<char>(to_double);
+	if (output >= 32 && output <= 126)
+		std::cout << "char: '" << output << "'" << std::endl;
+	else
+		std::cout << "char: Non displayable" << std::endl;
+}
+
+void	ScalarConverter::convert_to_int(std::string literal, std::string original_type, int flag)
+{
+	if (flag)
+	{
+		std::cout << "int: impossible" << std::endl;
+		return ;	
+	}
+	else if (original_type == "char")
+		std::cout << "int: " << static_cast<int>(*literal.begin()) << std::endl;	
+	
+	double	to_double = atof(literal.c_str());
+	std::cout << "int: " << static_cast<int>(to_double) << std::endl;
 }

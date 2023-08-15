@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Data.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jaiveca- <jaiveca-@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/29 23:17:01 by jaiveca-          #+#    #+#             */
-/*   Updated: 2023/08/15 01:57:04 by jaiveca-         ###   ########.fr       */
+/*   Created: 2023/08/14 04:02:18 by jaiveca-          #+#    #+#             */
+/*   Updated: 2023/08/14 15:20:26 by jaiveca-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ScalarConverter.hpp"
+#ifndef DATA_HPP
+# define DATA_HPP
 
-int	main(int argc, char **argv)
+struct Data
 {
-	if (argc != 2)
-	{
-		std::cout << "Please write a single string representing an int, float, double or char." << std::endl;
-		return (1);
-	}
-	ScalarConverter::convert(argv[1]);
-}
+	int 		test_int;
+	char		test_char;
+	std::string	test_string;
+};
+
+#endif

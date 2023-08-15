@@ -6,7 +6,7 @@
 /*   By: jaiveca- <jaiveca-@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/29 21:23:34 by jaiveca-          #+#    #+#             */
-/*   Updated: 2023/08/15 02:51:37 by jaiveca-         ###   ########.fr       */
+/*   Updated: 2023/08/15 14:47:27 by jaiveca-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ void ScalarConverter::convert(std::string literal)
 	std::string original_type;
 	int			flag = 0;
 	
-	if (literal == "-inff" || literal == "+inff" || literal == "nanf")
+	if (literal == "inff" || literal == "-inff" || literal == "+inff" || literal == "nanf")
 	{
 		original_type = "float";
 		flag = 1;		
 	}
-	else if (literal == "-inf" || literal == "+inf" || literal == "nan")
+	else if (literal == "inf" || literal == "-inf" || literal == "+inf" || literal == "nan")
 	{
 		original_type = "double";
 		flag = 1;		
@@ -64,8 +64,8 @@ void ScalarConverter::convert(std::string literal)
 	std::cout << "Type detected: " << original_type << std::endl;
 	convert_to_char(literal, original_type, flag);
 	convert_to_int(literal, original_type, flag);
-	// std::cout << "float:" << convert_to_float(literal, original_type) << std::endl;
-	// std::cout << "double:" << convert_to_double(literal, original_type) << std::endl;
+	convert_to_float(literal, original_type, flag);
+	convert_to_double(literal, original_type, flag);
 }
 
 std::size_t	ScalarConverter::check_e(std::string literal)
@@ -152,16 +152,18 @@ void	ScalarConverter::convert_to_char(std::string literal, std::string original_
 		if (*literal.begin() >= 32 && *literal.begin() <= 126)
 			std::cout << "char: '" << *literal.begin() << "'" << std::endl;
 		else
-			std::cout << "char: Non displayable" << std::endl;
+			std::cout << "char: Non displayable" << std::endl;	
 		return ;
 	}
 		
 	double	to_double = atof(literal.c_str());
 	char	output	= static_cast<char>(to_double);
-	if (output >= 32 && output <= 126)
+	if (to_double >= 32 && to_double <= 126)
 		std::cout << "char: '" << output << "'" << std::endl;
+	else if (to_double < 0 || to_double > 255)
+			std::cout << "char: impossible" << std::endl;
 	else
-		std::cout << "char: Non displayable" << std::endl;
+			std::cout << "char: Non displayable" << std::endl;	
 }
 
 void	ScalarConverter::convert_to_int(std::string literal, std::string original_type, int flag)
@@ -172,8 +174,69 @@ void	ScalarConverter::convert_to_int(std::string literal, std::string original_t
 		return ;	
 	}
 	else if (original_type == "char")
-		std::cout << "int: " << static_cast<int>(*literal.begin()) << std::endl;	
+		std::cout << "int: " << static_cast<int>(*literal.begin()) << std::endl;
 	
 	double	to_double = atof(literal.c_str());
-	std::cout << "int: " << static_cast<int>(to_double) << std::endl;
+	if ((static_cast<int>(to_double) == std::numeric_limits<int>::min() 
+	|| static_cast<int>(to_double) == std::numeric_limits<int>::max())
+	&& (literal != "-2147483648" || literal != "2147483647"))
+		std::cout << "int: impossible" << std::endl;
+	else
+		std::cout << "int: " << static_cast<int>(to_double) << std::endl;
+}
+
+void	ScalarConverter::convert_to_float(std::string literal, std::string original_type, int flag)
+{
+	(void)original_type;
+	double	to_double = std::atof(literal.c_str());
+	if (flag)
+	{
+		if (literal == "+inf" || literal == "+inff" || literal == "inf" || literal == "inff")
+			std::cout << "float: " << static_cast<float>(to_double) << "f" << std::endl;
+		else if (literal == "-inf" || literal == "-inff")
+			std::cout << "float: " << static_cast<float>(to_double) << "f" << std::endl;
+		else if (literal == "nan" || literal == "nanf")
+			std::cout << "float: " << static_cast<float>(to_double) << "f" << std::endl;
+	}
+	else
+	{
+		std::cout << "float: " << static_cast<float>(to_double);
+		if ((literal.find_first_of('.') == std::string::npos && literal.find_first_of('e') == std::string::npos && literal.length() < 7)
+		|| (literal.find_first_of('.') != std::string::npos && literal[literal.length() - 1] == '0')
+		|| (literal.find_first_of('.') != std::string::npos && literal[literal.length() - 1] == 'f' && literal[literal.length() - 2] == '0')
+		|| (literal.find_first_not_of('0') == std::string::npos)
+		|| literal[literal.length() - 1] == '.')
+			std::cout << ".0f" << std::endl;
+		else if (literal.find_first_of('.') != std::string::npos)
+			std::cout << "f" << std::endl;
+		else
+			std::cout << std::endl;
+	}
+}
+
+void	ScalarConverter::convert_to_double(std::string literal, std::string original_type, int flag)
+{
+	(void)original_type;
+	double	to_double = std::atof(literal.c_str());
+	if (flag)
+	{
+		if (literal == "+inf" || literal == "+inff" || literal == "inf" || literal == "inff")
+			std::cout << "double: " << static_cast<double>(to_double) << std::endl;
+		else if (literal == "-inf" || literal == "-inff")
+			std::cout << "double: " << static_cast<double>(to_double) << std::endl;
+		else if (literal == "nan" || literal == "nanf")
+			std::cout << "double: " << static_cast<double>(to_double) << std::endl;
+	}
+	else
+	{
+		std::cout << "double: " << static_cast<float>(to_double);
+		if ((literal.find_first_of('.') == std::string::npos && literal.find_first_of('e') == std::string::npos && literal.length() < 7)
+		|| (literal.find_first_of('.') != std::string::npos && literal[literal.length() - 1] == '0')
+		|| (literal.find_first_of('.') != std::string::npos && literal[literal.length() - 1] == 'f' && literal[literal.length() - 2] == '0')
+		|| (literal.find_first_not_of('0') == std::string::npos)
+		|| literal[literal.length() - 1] == '.')
+			std::cout << ".0" << std::endl;
+		else
+			std::cout << std::endl;
+	}
 }

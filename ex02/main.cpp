@@ -6,7 +6,7 @@
 /*   By: jaiveca- <jaiveca-@student.42lisboa.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 18:46:13 by jaiveca-          #+#    #+#             */
-/*   Updated: 2023/08/14 22:39:19 by jaiveca-         ###   ########.fr       */
+/*   Updated: 2023/08/15 15:01:42 by jaiveca-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,22 @@ void identify(Base& p)
 {
 	try
 	{
-		dynamic_cast<A&>(p);
+		A &a_test = dynamic_cast<A&>(p);
+		(void)a_test;
 		std::cout << "A" << std::endl;
 	}
 	catch(const std::exception& e){}
 	try
 	{
-		dynamic_cast<B&>(p);
+		B &b_test = dynamic_cast<B&>(p);
+		(void)b_test;
 		std::cout << "B" << std::endl;
 	}
 	catch(const std::exception& e){}
 	try
 	{
-		dynamic_cast<C&>(p);
+		C &c_test = dynamic_cast<C&>(p);
+		(void)c_test;
 		std::cout << "C" << std::endl;
 	}
 	catch(const std::exception& e){}
